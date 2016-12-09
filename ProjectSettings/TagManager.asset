@@ -1,0 +1,62 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!78 &1
+TagManager:
+  serializedVersion: 2
+  tags:
+  - Floor
+  - Barrel
+  - FireBarrel
+  - Metal
+  - Scenery
+  - Bomb
+  - Damager
+  layers:
+  - Default
+  - TransparentFX
+  - Ignore Raycast
+  - 
+  - Water
+  - UI
+  - 
+  - 
+  - Barrel
+  - Floor
+  - Background
+  - Intro
+  - Skybox
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  m_SortingLayers:
+  - name: Default
+    uniqueID: 0
+    locked: 0
+  - name: Background
+    uniqueID: 227696293
+    locked: 0
+  - name: Unit
+    uniqueID: 444623757
+    locked: 0
+  - name: Effect
+    uniqueID: 595743113
+    locked: 0
+  - name: Foreground
+    uniqueID: 118159505
+    locked: 0
