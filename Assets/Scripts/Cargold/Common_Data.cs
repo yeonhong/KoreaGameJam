@@ -7,11 +7,15 @@ public struct CompanyDataStr
 	public int id;
 	public string name;
 	public Sprite Image;
-	[HideInInspector] public float fluctuateValue_RecentDay;
-	[HideInInspector] public float fluctuateValue_Total;
+	public float fluctuateValue_RecentDay;
+	public float fluctuateValue_Total;
+
+	public float[] fluctuateValue;
 
 	public void Init_Func()
 	{
+		fluctuateValue = new float[Common_Data.Instance().dayNum];
+
 		fluctuateValue_RecentDay = 0f;
 		fluctuateValue_Total = 0f;
 	}

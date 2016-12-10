@@ -25,6 +25,7 @@ public class Player_Script : GameManager_Script
 	public GameObject[] investCount_C;
 
 	public GameObject[,] investCount;
+	public CompanyFluctuateData_Script[] companyFlucData;
 
 	void Awake()
 	{
@@ -54,6 +55,11 @@ public class Player_Script : GameManager_Script
 		base.ReadyFirstState_Func ();
 
 		isSlideClear = true;
+
+		for(int i=0; 3>i; i++)
+		{
+			companyFlucData[i].Init_Func();
+		}
 	}
 
 	protected override void NextDay_Func()
@@ -132,11 +138,6 @@ public class Player_Script : GameManager_Script
 				}
 			}
 		}
-	}
-
-	public void SetGoldAmount_Func(float _value)
-	{
-		goldAmount.text = ((int)_value).ToString();
 	}
 
 	public void InvestComfirm_Func()

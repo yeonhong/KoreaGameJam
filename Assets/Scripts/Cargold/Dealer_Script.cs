@@ -6,9 +6,7 @@ using UnityEngine.UI;
 
 public class Dealer_Script : GameManager_Script
 {
-	public Hint_Script HintClass = null;
 	public bool isReadyAllPlayer = false;
-
 	public int investCount = 0;
 
 	public class cPlayerInvestData
@@ -22,8 +20,8 @@ public class Dealer_Script : GameManager_Script
 
 	public GameObject investClearObj = null;
 
-	public Text[] companyNameText;
 	public Text[] companyGrowValueText;
+	public CompanyFluctuateData_Script[] companyFlucData;
 
 //	public Text[,] playerInvestAmountText;
 //	public Text[,] playerGoldAmountText;
@@ -40,7 +38,8 @@ public class Dealer_Script : GameManager_Script
 //			Debug.Log("Host : 아직 4명의 플레이어가 준비되지 않았습니다.");
 ////			Debug.Log("현재 접속 인원 : " + );
 //		}
-		if (true == GameManager.instance.IsAllNicknameSetting()) {
+		if (true == GameManager.instance.IsAllNicknameSetting())
+		{
 			SetState_Func(GameState.Ready_First);
 		}
 	}
@@ -48,11 +47,6 @@ public class Dealer_Script : GameManager_Script
 	protected override void ReadyFirstState_Func ()                                                    
 	{
 		base.ReadyFirstState_Func();
-
-		for(int i=0; 3>i; i++)
-		{
-			companyNameText[i].text = Common_Data.Instance().CompanyData[i].name;
-		}
 
 		SetState_Func(GameState.Market);
 	}
@@ -95,7 +89,7 @@ public class Dealer_Script : GameManager_Script
 		{
 			float randValue = Random.Range(minValue, maxValue);
 
-			Common_Data.Instance().CompanyData[i].fluctuateValue_RecentDay = randValue;
+			Common_Data.Instance().CompanyData[i].fluctuateValue[today-1] = randValue;
 			Common_Data.Instance().CompanyData[i].fluctuateValue_Total += randValue;
 
 			PlayerPrefs.SetInt ("Change" + i,(int)randValue);
@@ -119,18 +113,10 @@ public class Dealer_Script : GameManager_Script
 		{
 			dicInvestData[pid].playerInvestAmount[companyID] = _investCoinNum[companyID];
 			dicInvestData[pid].playerGoldAmount[companyID] = dicInvestData[pid].playerInvestAmount[companyID]
-				* Common_Data.Instance().CompanyData[companyID].fluctuateValue_RecentDay;
-
-//			playerInvestAmount[_playerID, companyID] = _investCoinNum[companyID];
-//			playerGoldAmount[_playerID, companyID] += playerInvestAmount[_playerID, companyID]
-//				* Common_Data.Instance().CompanyData[companyID].fluctuateValue_RecentDay;
+				* Common_Data.Instance().CompanyData[companyID].fluctuateValue[today-1];
 		}
 
 		float[] _returnValue = new float[Common_Data.Instance().GetCompanyNum_Func()];
-
-//		for(int i=0; 3>i; i++) {
-//			dicInvestData[pid].playerInvestAmount[i];
-//		}
 
 		investCount++;
 
@@ -161,16 +147,21 @@ public class Dealer_Script : GameManager_Script
 	{
 		for(int companyID=0; 3>companyID; companyID++)
 		{
-			companyGrowValueText[companyID].text = ((int)Common_Data.Instance().CompanyData[companyID].fluctuateValue_RecentDay).ToString();
-		}
+			companyGrowValueText[companyID].text = ((int)Common_Data.Instance().CompanyData[companyID].fluctuateValue[today-1]).ToString();
 
-//		for(int playerID=0; 4>playerID; playerID++)
-//		{
-//			//Debug.Log("플레이어 " + playerID + "의 투자 코인 : " +
-////			((int)playerInvestAmount[playerID, 0]).ToString() + ", " +
-////			((int)playerInvestAmount[playerID, 1]).ToString() + ", " +
-////			((int)playerInvestAmount[playerID, 2]).ToString() + ", ");
-//		}
+			if( Common_Data.Instance().CompanyData[companyID].fluctuateValue[today-1] > 0f )
+			{
+				companyFlucData[companyID].SetData_Func(FluctuateDataState.Up, (int)Common_Data.Instance().CompanyData[companyID].fluctuateValue[today-1]);
+			}
+			else if( Common_Data.Instance().CompanyData[companyID].fluctuateValue[today-1] == 0f )
+			{
+				companyFlucData[companyID].SetData_Func(FluctuateDataState.Steady, (int)Common_Data.Instance().CompanyData[companyID].fluctuateValue[today-1]);
+			}
+			else if( 0f > Common_Data.Instance().CompanyData[companyID].fluctuateValue[today-1] )
+			{
+				companyFlucData[companyID].SetData_Func(FluctuateDataState.Down, (int)Common_Data.Instance().CompanyData[companyID].fluctuateValue[today-1]);
+			}
+		}
 			
 		yield return null;
 	}
@@ -236,11 +227,6 @@ public class Dealer_Script : GameManager_Script
 //		}
 
 		winnerText.text = "승자는 누구누구입니다!";
-	}
-
-	public string GetHint_Func()
-	{
-		return HintClass.GetHint_Func();
 	}
 
 	public override void SetState_Func (GameState _setState)
