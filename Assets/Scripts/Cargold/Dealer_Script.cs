@@ -11,21 +11,43 @@ public class Dealer_Script : GameManager_Script
 
 	public class cPlayerInvestData
 	{
-		public float[] playerInvestAmount  = new float[3];
-		public float[] playerGoldAmount = new float[3];
-		public float playerGoldAmount_Total;
+		public int[] playerInvestAmount  = new int[3];
+		public int[] playerGoldAmount = new int[3];
+		public int playerGoldAmount_Total;
 	}
 
 	public Dictionary<NetworkInstanceId, cPlayerInvestData> dicInvestData = new Dictionary<NetworkInstanceId, cPlayerInvestData>();
 
 	public GameObject investClearObj = null;
 
-	public Text[] companyGrowValueText;
 	public CompanyFluctuateData_Script[] companyFlucData;
 
 //	public Text[,] playerInvestAmountText;
 //	public Text[,] playerGoldAmountText;
 	public Text winnerText = null;
+
+	public CoinIconGrid_Script[] coinGrid_player0;
+	public CoinIconGrid_Script[] coinGrid_player1;
+	public CoinIconGrid_Script[] coinGrid_player2;
+	public CoinIconGrid_Script[] coinGrid_player3;
+	public CoinIconGrid_Script[,] coinGrid;
+
+	public Transform fluctuateTrf = null;
+	public Transform resultTrf = null;
+	public Vector3 showPos;
+	public Vector3 hidePos;
+
+	void Awake()
+	{
+		coinGrid = new CoinIconGrid_Script[4,3];
+		for(int i=0; 3>i; i++)
+		{
+			coinGrid[0,i] = coinGrid_player0[i];
+			coinGrid[1,i] = coinGrid_player1[i];
+			coinGrid[2,i] = coinGrid_player2[i];
+			coinGrid[3,i] = coinGrid_player3[i];
+		}
+	}
 
 	public void StartGame_Func()
 	{
@@ -99,7 +121,7 @@ public class Dealer_Script : GameManager_Script
 	}
 
 	//!!!!!!!!!!
-	public float[] Invest_Func(NetworkInstanceId pid, float[] _investCoinNum)
+	public void Invest_Func(NetworkInstanceId pid, int[] _investCoinNum)
 	{
 //		int _playerID = 0; //!!!
 
@@ -112,20 +134,14 @@ public class Dealer_Script : GameManager_Script
 		for(int companyID=0; 3>companyID; companyID++)
 		{
 			dicInvestData[pid].playerInvestAmount[companyID] = _investCoinNum[companyID];
-			dicInvestData[pid].playerGoldAmount[companyID] = dicInvestData[pid].playerInvestAmount[companyID]
-				* Common_Data.Instance().CompanyData[companyID].fluctuateValue[today-1];
 		}
-
-		float[] _returnValue = new float[Common_Data.Instance().GetCompanyNum_Func()];
-
+			
 		investCount++;
 
 		if( investCount >= GameManager.instance.listNetClient.Count - 1 ) {
 			Debug.Log ("invest End!");
 			investClearObj.SetActive(true);
 		}
-
-		return _returnValue;
 	}
 
 	public void InvestClear_Func()
@@ -145,10 +161,11 @@ public class Dealer_Script : GameManager_Script
 
 	IEnumerator Fluctuate_Cor()
 	{
+		fluctuateTrf.position = showPos;
+		resultTrf.position = hidePos;
+
 		for(int companyID=0; 3>companyID; companyID++)
 		{
-			companyGrowValueText[companyID].text = ((int)Common_Data.Instance().CompanyData[companyID].fluctuateValue[today-1]).ToString();
-
 			if( Common_Data.Instance().CompanyData[companyID].fluctuateValue[today-1] > 0f )
 			{
 				companyFlucData[companyID].SetData_Func(FluctuateDataState.Up, (int)Common_Data.Instance().CompanyData[companyID].fluctuateValue[today-1]);
@@ -164,9 +181,9 @@ public class Dealer_Script : GameManager_Script
 		}
 
 		transform.parent.GetComponent<NetClient> ().RpcStockResultInYesterday (
-			Common_Data.Instance ().CompanyData [0].fluctuateValue [today - 1],
-			Common_Data.Instance ().CompanyData [1].fluctuateValue [today - 1],
-			Common_Data.Instance ().CompanyData [2].fluctuateValue [today - 1]);
+			(int)Common_Data.Instance ().CompanyData [0].fluctuateValue [today - 1],
+			(int)Common_Data.Instance ().CompanyData [1].fluctuateValue [today - 1],
+			(int)Common_Data.Instance ().CompanyData [2].fluctuateValue [today - 1]);
 
 		yield return null;
 	}
@@ -175,10 +192,80 @@ public class Dealer_Script : GameManager_Script
 	{
 		SetState_Func(GameState.Result);
 	}
-
+		
 	protected override void ResultState_Func ()
 	{
 		base.ResultState_Func ();
+
+		fluctuateTrf.position = hidePos;
+		resultTrf.position = showPos;
+
+		// 결과창에 코인 아이콘 개수 0개로 초기화
+		for(int playerID=0; dicInvestData.Count>playerID; playerID++)
+		{
+			for(int companyID=0; 3>companyID; companyID++)
+			{
+				coinGrid[playerID, companyID].SetCoint_Func(0);
+			}
+		}
+
+		#region 같은 투자 코인 검색
+		NetworkInstanceId[] arrids = new NetworkInstanceId[dicInvestData.Count];
+		int i = 0;
+		foreach (KeyValuePair<NetworkInstanceId, cPlayerInvestData> target in dicInvestData)
+		{
+			arrids[i++] = target.Key;
+		}
+
+		// 각 회사 별로...
+		for(int companyID=0; 3>companyID; companyID++)
+		{
+
+			// 플레이어들 중...
+			for(int playerID=0; playerID<arrids.Length; ++playerID)
+			{
+
+				// 1~5의 투자횟수가...
+				int sameInvestCheck_PlayerID = -1;
+				for(int sameValue = 1; 5>=sameValue; sameValue++)
+				{
+
+					// 동일하다면은...
+					if( dicInvestData[arrids[playerID]].playerInvestAmount[companyID] == sameValue )
+					{
+
+						// sameInvestCheck_PlayerID에 해당 플레이어 ID 기록
+						// 만약 이미 기록되어 있는데 또 발생한다면...
+						if( sameInvestCheck_PlayerID == -1 )
+						{
+							sameInvestCheck_PlayerID = playerID;
+						}
+						else
+						{
+							// 무효 처리!
+
+							dicInvestData[arrids[playerID]].playerInvestAmount[companyID] = 0;
+							dicInvestData[arrids[sameInvestCheck_PlayerID]].playerInvestAmount[companyID] = 0;
+						}
+					}
+				}
+			}
+		}
+		#endregion
+
+		// 결과창에 코인 아이콘 개수 초기화
+		// 돈 증가
+		for(int playerID=0; dicInvestData.Count>playerID; playerID++)
+		{
+			for(int companyID=0; 3>companyID; companyID++)
+			{
+				int investCount = dicInvestData[arrids[playerID]].playerInvestAmount[companyID];
+
+				coinGrid[playerID, companyID].SetCoint_Func(investCount);
+				dicInvestData[arrids[playerID]].playerGoldAmount[companyID] = investCount *
+					Common_Data.Instance().coinMeasure;
+			}
+		}
 
 		foreach (KeyValuePair<NetworkInstanceId, cPlayerInvestData> target in dicInvestData) {
 			target.Value.playerGoldAmount_Total += target.Value.playerGoldAmount [0];
@@ -218,18 +305,6 @@ public class Dealer_Script : GameManager_Script
 
 			Debug.Log ("플레이어 " + target.Key + "의 재산 : " + target.Value.playerGoldAmount_Total);
 		}
-
-//		for(int playerID=0; 4>playerID; playerID++)
-//		{
-//			Debug.Log("플레이어 " + playerID + "의 재산 : " +
-//				((int)playerGoldAmount[playerID, 0]).ToString() + ", " +
-//				((int)playerGoldAmount[playerID, 1]).ToString() + ", " +
-//				((int)playerGoldAmount[playerID, 2]).ToString() + ", ");
-//
-//			playerGoldAmount_Total[playerID] += playerGoldAmount[playerID, 0];
-//			playerGoldAmount_Total[playerID] += playerGoldAmount[playerID, 1];
-//			playerGoldAmount_Total[playerID] += playerGoldAmount[playerID, 2];
-//		}
 
 		winnerText.text = "승자는 누구누구입니다!";
 	}

@@ -40,6 +40,6 @@ public class Common_Data : MonoBehaviour
 	public int playerNum = 0;
 	public float marketFluctuateValue_Min = 0;
 	public float marketFluctuateValue_Max = 0;
-	public float coinMeasure = 0f;
+	public int coinMeasure = 0;
 	public CompanyDataStr[] CompanyData;
 }

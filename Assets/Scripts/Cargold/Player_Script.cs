@@ -10,7 +10,7 @@ public class Player_Script : GameManager_Script
 	public Text goldAmount = null;
 
 	public int coinNum = 0;
-	public float[] investCoin;
+	public int[] investCoin;
 	public GameObject investedCheckObj = null;
 	public bool isPlayerInvested = false;
 
@@ -69,7 +69,7 @@ public class Player_Script : GameManager_Script
 		coinNum = 5;
 		isPlayerInvested = false;
 		investedCheckObj.SetActive(false);
-		investCoin = new float[Common_Data.Instance().GetCompanyNum_Func()];
+		investCoin = new int[Common_Data.Instance().GetCompanyNum_Func()];
 		slideAni.Play("HintUnlock");
 		lockHintID = -1;
 
@@ -105,7 +105,7 @@ public class Player_Script : GameManager_Script
 		if( coinNum > 0 )
 		{
 			coinNum--;
-			investCoin[id] += Common_Data.Instance().coinMeasure;
+			investCoin[id]++;
 
 			Debug.Log ("InvestIncrease_Func : " + coinNum);
 
@@ -125,7 +125,7 @@ public class Player_Script : GameManager_Script
 		if (investCoin [id] > 0)
 		{
 			coinNum++;
-			investCoin [id] -= Common_Data.Instance ().coinMeasure;
+			investCoin [id]--;
 
 			Debug.Log ("InvestDecrease_Func : " + coinNum);
 
@@ -229,6 +229,22 @@ public class Player_Script : GameManager_Script
 		
 	public void ReciveStockInfo(int company1, int company2, int company3) 
 	{
-		
+		int[] company = new int[]{company1, company2, company3};
+
+		for(int i=0; 3>i; i++)
+		{
+			if( company[i] > 0f )
+			{
+				companyFlucData[i].SetData_Func(FluctuateDataState.Up, company[i]);
+			}
+			else if( company[i] == 0f )
+			{
+				companyFlucData[i].SetData_Func(FluctuateDataState.Steady, company[i]);
+			}
+			else if( 0f > company[i] )
+			{
+				companyFlucData[i].SetData_Func(FluctuateDataState.Down, company[i]);
+			}
+		}
 	}
 }

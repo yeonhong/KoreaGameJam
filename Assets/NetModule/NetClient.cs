@@ -190,13 +190,13 @@ public class NetClient : NetworkBehaviour
 		}
 	}
 
-	public void ReqInvestCoin(float[] arrCoin)
+	public void ReqInvestCoin(int[] arrCoin)
 	{
 		CmdInvestCoin (netId, arrCoin);
 	}
 
 	[Command]
-	public void CmdInvestCoin(NetworkInstanceId netid, float[] arrCoin)
+	public void CmdInvestCoin(NetworkInstanceId netid, int[] arrCoin)
 	{
 		Debug.Log ("CmdInvestCoin");
 		GameObject objDealer = GameObject.Find ("Dealer(Clone)");
