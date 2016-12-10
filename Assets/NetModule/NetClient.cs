@@ -1,6 +1,14 @@
 ﻿using UnityEngine;
 using UnityEngine.Networking;
+using System;
 using System.Collections;
+
+public struct stUserData
+{
+	public int int1;
+	public int int2;
+	public int int3;
+}
 
 public class NetClient : NetworkBehaviour 
 {
@@ -8,17 +16,37 @@ public class NetClient : NetworkBehaviour
 	[SyncVar]
 	public string nickName = "Guest";
 
-	public bool bNicknameConfirm = false;
+//	[SyncVar(hook = "OnChangeSyncVar")]
+//	public int nSyncVar = 100;
+//	// onchange test.
+//	void OnChangeSyncVar(int value)
+//	{
+//		Debug.Log ("OnChangeSyncVar " + value);
+//	}
+	// Client Data Struct.
 
-	void OnEnable()
-	{
-		gameObject.name = "NetClient" + netId;
-	}
+//	public class cUserData : SyncListStruct<stUserData> {}
+//	public cUserData m_bufs = new cUserData();
+
+	[SyncVar]
+	public stUserData userData;
+
+	public bool bNicknameConfirm = false;
 
 	void Update()
 	{
 		if(GameManager.instance.myNetClient == null && isLocalPlayer)
 			GameManager.instance.myNetClient = this;
+
+		if (isLocalPlayer) {
+			if (Input.GetKeyDown (KeyCode.Q)) {
+				GameManager.instance.SetSyncData (netId);
+			}
+
+			if (Input.GetKeyDown (KeyCode.E)) {
+				
+			}
+		}
 	}
 
 //	void Update()

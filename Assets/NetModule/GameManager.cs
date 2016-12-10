@@ -22,9 +22,11 @@ public class GameManager : Singleton<GameManager>
 	static eGameMode _gameMode = eGameMode.Lobby;
 	public static eGameMode GameMode { get { return _gameMode; } }
 
+	// network module manage.
 	public NetClient myNetClient = null;
 	public NetManager myNetManager = null;
 
+	// netClinet manage.
 	public List<NetClient> listNetClient = new List<NetClient>();
 	public Dictionary<NetworkInstanceId, NetClient> lookupNetClient = new Dictionary<NetworkInstanceId, NetClient>();
 
@@ -82,4 +84,11 @@ public class GameManager : Singleton<GameManager>
 		return true;
 	}
 
+	public void SetSyncData(NetworkInstanceId netid)
+	{
+		for (int f = 0; f < listNetClient.Count; f++) {
+			if (listNetClient [f].netId != netid) {
+			}
+		}
+	}
 }
