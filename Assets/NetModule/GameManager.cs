@@ -70,5 +70,10 @@ public class GameManager : Singleton<GameManager>
 
 		for (int f = 0; f < 8; ++f)
 			listHint.Add (PlayerPrefs.GetString ("Hint" + f));
+
+		for (int f = 0; f < listHint.Count; ++f) {
+			Debug.Log (listHint [f]);
+		}
+			
 	}
 }

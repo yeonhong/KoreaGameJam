@@ -17,7 +17,7 @@ public class NetClient : NetworkBehaviour
 {
 	//[SyncVar(hook = "OnChangeSyncVar")]
 	[SyncVar]
-	public string nickName = "Guest";
+	public string m_nickName = "Guest";
 
 //	[SyncVar(hook = "OnChangeSyncVar")]
 //	public int nSyncVar = 100;
@@ -97,7 +97,9 @@ public class NetClient : NetworkBehaviour
 
 	public void SendNickName(string nickname)
 	{
-		CmdSendNickName (nickName, netId);
+		m_nickName = nickname;
+
+		CmdSendNickName (m_nickName, netId);
 	}
 
 	[Command]
@@ -107,7 +109,7 @@ public class NetClient : NetworkBehaviour
 		int allClientCount = GameManager.instance.listNetClient.Count;
 
 		if (GameManager.instance.lookupNetClient.ContainsKey (netId)) {
-			GameManager.instance.lookupNetClient [netId].nickName = nickname;
+			GameManager.instance.lookupNetClient [netId].m_nickName = nickname;
 			GameManager.instance.lookupNetClient [netId].bNicknameConfirm = true;
 		}
 		else
@@ -200,6 +202,15 @@ public class NetClient : NetworkBehaviour
 		GameObject objDealer = GameObject.Find ("Dealer(Clone)");
 		if (objDealer != null)
 			objDealer.GetComponent<Dealer_Script> ().Invest_Func (netid, arrCoin);
+	}
+
+	[ClientRpc]
+	public void RpcStockResultInYesterday(int company1, int company2, int company3)
+	{
+		GameObject objPlayer = GameObject.Find ("Player(Clone)");
+		if (objPlayer != null) {
+			objPlayer.GetComponent<Player_Script> ().ReciveStockInfo (company1, company2, company3);
+		}
 	}
 }
 

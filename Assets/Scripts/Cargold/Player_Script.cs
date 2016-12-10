@@ -226,4 +226,9 @@ public class Player_Script : GameManager_Script
 	{
 		isSlideClear = true;
 	}
+		
+	public void ReciveStockInfo(int company1, int company2, int company3) 
+	{
+		
+	}
 }

@@ -162,7 +162,12 @@ public class Dealer_Script : GameManager_Script
 				companyFlucData[companyID].SetData_Func(FluctuateDataState.Down, (int)Common_Data.Instance().CompanyData[companyID].fluctuateValue[today-1]);
 			}
 		}
-			
+
+		transform.parent.GetComponent<NetClient> ().RpcStockResultInYesterday (
+			Common_Data.Instance ().CompanyData [0].fluctuateValue [today - 1],
+			Common_Data.Instance ().CompanyData [1].fluctuateValue [today - 1],
+			Common_Data.Instance ().CompanyData [2].fluctuateValue [today - 1]);
+
 		yield return null;
 	}
 

@@ -45,5 +45,16 @@ public class NetManager : NetworkManager
 //	}
 
 
+	public void OnClickStartDealer()
+	{
+		// start dealer.
+		StartHost ();
+	}
+
+	public void OnClickStartPlayer()
+	{
+		// start normal player.
+		StartClient ();
+	}
 
 }
