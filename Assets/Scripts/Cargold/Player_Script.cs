@@ -5,7 +5,7 @@ using UnityEngine.UI;
 public class Player_Script : GameManager_Script
 {
 	public Dealer_Script DealerClass = null;
-	public int id = 0;
+
 	public int coinNum = 0;
 	public float[] investCoin;
 	public Text goldAmount = null;
@@ -20,7 +20,8 @@ public class Player_Script : GameManager_Script
 
 		base.Init_Func(PlayerType.Player);
 
-		id = DealerClass.InitPlayer_Func(this);
+		transform.parent.GetComponent<NetClient>().SendNickName ("init");
+
 	}
 
 	protected override void ReadyFirstState_Func ()
@@ -44,16 +45,21 @@ public class Player_Script : GameManager_Script
 
 	protected override void MarketState_Func ()
 	{
-		Debug.Log("Test 1, State : " + gameState);
 		base.MarketState_Func ();
-		Debug.Log("Test 2, State : " + gameState);
 
-		hintText[0].text = DealerClass.GetHint_Func();
-		hintText[1].text = DealerClass.GetHint_Func();
+		transform.parent.GetComponent<NetClient> ().ReqGetHint ();
+	}
+
+	public void RecvHint(string hint1, string hint2)
+	{
+		hintText[0].text = hint1;
+		hintText[1].text = hint2;
 	}
 
 	public void InvestIncrease_Func(int id)
 	{
+		Debug.Log ("InvestIncrease_Func : " + coinNum);
+
 		if( coinNum > 0 )
 		{
 			coinNum--;
@@ -63,6 +69,8 @@ public class Player_Script : GameManager_Script
 
 	public void InvestDecrease_Func(int id)
 	{
+		Debug.Log ("InvestDecrease_Func : " + coinNum);
+
 		coinNum++;
 		investCoin[id] -= Common_Data.Instance().coinMeasure;
 	}
@@ -80,7 +88,8 @@ public class Player_Script : GameManager_Script
 		{
 			isPlayerInvested = true;
 
-			investCoin = DealerClass.Invest_Func(id, investCoin);
+			transform.parent.GetComponent<NetClient> ().ReqInvestCoin (investCoin);
+			//investCoin = DealerClass.Invest_Func(transform.parent.GetComponent<NetClient>().netId, investCoin);
 		}
 	}
 }

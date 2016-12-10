@@ -20,13 +20,12 @@ public class NetManager : NetworkManager
 		var player = (GameObject)GameObject.Instantiate(playerPrefab, Vector3.zero, Quaternion.identity);
 		NetworkServer.AddPlayerForConnection(conn, player, playerControllerId);
 
-
 		// inner NetClient Manage.
 		NetClient newNetClient = player.GetComponent<NetClient> ();
 		GameManager.instance.listNetClient.Add (newNetClient);
 		GameManager.instance.lookupNetClient.Add (newNetClient.netId, newNetClient);
 
-		player.name = "NetClient" + newNetClient.netId;
+		Debug.Log ("OnServerAddPlayer");
 	}
 
 	// called when connected to a server
@@ -36,7 +35,7 @@ public class NetManager : NetworkManager
 
 		Debug.Log ("OnClientConnect");
 
-		GameManager.instance.ChangeMode (eGameMode.SetName);
+		//GameManager.instance.ChangeMode (eGameMode.SetName);
 	}
 
 //	// called when disconnected from a server

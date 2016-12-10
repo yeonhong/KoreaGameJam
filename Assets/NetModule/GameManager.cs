@@ -3,25 +3,8 @@ using UnityEngine.Networking;
 using System.Collections;
 using System.Collections.Generic;
 
-public enum eGameMode : int
-{
-	Lobby = 0,
-	SetName,
-	Start,
-	Talking,
-	Batting,
-	Result,
-	End
-}
-
 public class GameManager : Singleton<GameManager> 
 {
-	public const bool isDealerMode = true;
-	public const bool isLowerPlayer = true;
-
-	static eGameMode _gameMode = eGameMode.Lobby;
-	public static eGameMode GameMode { get { return _gameMode; } }
-
 	// network module manage.
 	public NetClient myNetClient = null;
 	public NetManager myNetManager = null;
@@ -29,6 +12,9 @@ public class GameManager : Singleton<GameManager>
 	// netClinet manage.
 	public List<NetClient> listNetClient = new List<NetClient>();
 	public Dictionary<NetworkInstanceId, NetClient> lookupNetClient = new Dictionary<NetworkInstanceId, NetClient>();
+
+	public GameObject objDealer;
+	public GameObject objPlayer;
 
 	protected override void Start() {
 		base.Start ();
@@ -39,56 +25,36 @@ public class GameManager : Singleton<GameManager>
 	{
 		listNetClient.Clear ();
 		lookupNetClient.Clear ();
-		_gameMode = eGameMode.Lobby;
-	}
-
-	public void ChangeMode(eGameMode next)
-	{
-		switch (next) {
-		case eGameMode.SetName:
-			// my nickname transfer.
-			UIManager.instance.SetUI_SetName ();
-
-			break;
-		case eGameMode.Start:
-			// server all ready message.
-			UIManager.instance.SetUI_Start ();
-			break;
-
-		case eGameMode.Talking:
-			UIManager.instance.SetUI_Talking ();
-			break;
-		case eGameMode.Batting:
-			UIManager.instance.SetUI_Battle ();
-			break;
-		case eGameMode.Result:
-			UIManager.instance.SetUI_Result ();
-			break;
-		case eGameMode.End:
-			UIManager.instance.SetUI_End ();
-			break;
-		}
-
-		UIManager.instance.SetText (next.ToString ());
-
-		_gameMode = next;
 	}
 
 	public bool IsAllNicknameSetting()
 	{
+		if (listNetClient.Count == 1) // dealer...
+			return false;
+
 		for(int f=0; f<listNetClient.Count; ++f) {
-			if (!listNetClient [f].bNicknameConfirm)
+
+			Debug.Log ("listNetClient[" + f + "]" + listNetClient [f].tag + "," +listNetClient [f].bNicknameConfirm);
+
+			if (listNetClient [f].transform.childCount == 0 && !listNetClient [f].bNicknameConfirm) {
 				return false;
+			}
 		}
 
 		return true;
 	}
 
-	public void SetSyncData(NetworkInstanceId netid)
+	public void SetDealerUI(GameObject target)
 	{
-		for (int f = 0; f < listNetClient.Count; f++) {
-			if (listNetClient [f].netId != netid) {
-			}
-		}
+		GameObject objUI = Instantiate (objDealer, target.transform) as GameObject;
+		//objUI.transform.localPosition = Vector3.zero;
+		objUI.transform.localPosition = new Vector3(0,342,0);
+	}
+
+	public void SetPlayerUI(GameObject target)
+	{
+		GameObject objUI = Instantiate (objPlayer, target.transform) as GameObject;
+		//objUI.transform.localPosition = Vector3.zero;
+		objUI.transform.localPosition = new Vector3(0,169,0);
 	}
 }

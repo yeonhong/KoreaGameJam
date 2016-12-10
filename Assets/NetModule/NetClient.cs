@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.Networking;
+using UnityEngine.UI;
 using System;
 using System.Collections;
 
@@ -9,6 +10,8 @@ public struct stUserData
 	public int int2;
 	public int int3;
 }
+
+
 
 public class NetClient : NetworkBehaviour 
 {
@@ -35,16 +38,18 @@ public class NetClient : NetworkBehaviour
 
 	void Update()
 	{
-		if(GameManager.instance.myNetClient == null && isLocalPlayer)
+		// init...
+		if (GameManager.instance.myNetClient == null && isLocalPlayer) {
 			GameManager.instance.myNetClient = this;
 
-		if (isLocalPlayer) {
-			if (Input.GetKeyDown (KeyCode.Q)) {
-				GameManager.instance.SetSyncData (netId);
-			}
+			gameObject.transform.parent = GameObject.Find ("Canvas").transform;
+			gameObject.transform.localPosition = Vector3.zero;
+			gameObject.name = "NetClient" + netId;
 
-			if (Input.GetKeyDown (KeyCode.E)) {
-				
+			if (this.isServer) {
+				GameManager.instance.SetDealerUI (gameObject);
+			} else {
+				GameManager.instance.SetPlayerUI (gameObject);
 			}
 		}
 	}
@@ -90,6 +95,11 @@ public class NetClient : NetworkBehaviour
 
 	#endregion //RPC Region
 
+	public void SendNickName(string nickname)
+	{
+		CmdSendNickName (nickName, netId);
+	}
+
 	[Command]
 	public void CmdSendNickName(string nickname, NetworkInstanceId netID)
 	{
@@ -114,16 +124,72 @@ public class NetClient : NetworkBehaviour
 	public void RpcSetPlayerNickName(string nickname, NetworkInstanceId netID)
 	{
 		Debug.Log ("Change NickName : " + netID + " : " + nickname);
-		if (GameManager.instance.lookupNetClient.ContainsKey (netId)) {
-			GameManager.instance.lookupNetClient [netId].nickName = nickname;
-			GameManager.instance.lookupNetClient [netId].bNicknameConfirm = true;
-		}
+	}
+
+	[Command]
+	public void CmdSetStatePlayer(GameState _setState) {
+		RpcSetStatePlayer (_setState);
 	}
 
 	[ClientRpc]
 	public void RpcPlayerAllReady()
 	{
-		GameManager.instance.ChangeMode (eGameMode.Start);
+		Debug.Log ("RpcPlayerAllReady gameObject " + gameObject.name);
+		//if (gameObject.tag == "GameController")
+		if(isServer && gameObject.transform.childCount > 0)
+			gameObject.transform.GetChild (0).GetComponent<Dealer_Script> ().StartGame_Func ();
+	}
+		
+	[ClientRpc]
+	public void RpcSetStatePlayer(GameState _setState)
+	{
+//		Debug.Log ("RpcSetStatePlayer gameObject " + gameObject.name);
+//		Debug.Log ("RpcSetStatePlayer gameObject " + gameObject.transform.childCount);
+//		Debug.Log (".. " + GameObject.Find ("Player(Clone)"));
+//
+//		if (gameObject.transform.childCount > 0)
+//			gameObject.transform.GetChild(0).GetComponent<Player_Script>().SetState_Func (_setState);
+
+		GameObject objPlayer = GameObject.Find ("Player(Clone)");
+		if (objPlayer != null) {
+			objPlayer.GetComponent<Player_Script> ().SetState_Func (_setState);
+		}
+	}
+
+	public void ReqGetHint()
+	{
+		CmdGetHint (netId);
+	}
+
+	[Command]
+	public void CmdGetHint(NetworkInstanceId netid)
+	{
+		string hint1 = "hint1";
+		string hint2 = "hint2";
+		RpcGetHint (netid, hint1, hint2);
+	}
+
+	[ClientRpc]
+	public void RpcGetHint(NetworkInstanceId _netid, string hint1, string hint2)
+	{
+		GameObject objPlayer = GameObject.Find ("Player(Clone)");
+		if (objPlayer != null && objPlayer.transform.parent.GetComponent<NetClient>().netId == _netid) {
+			objPlayer.GetComponent<Player_Script> ().RecvHint (hint1, hint2);
+		}
+	}
+
+	public void ReqInvestCoin(float[] arrCoin)
+	{
+		CmdInvestCoin (netId, arrCoin);
+	}
+
+	[Command]
+	public void CmdInvestCoin(NetworkInstanceId netid, float[] arrCoin)
+	{
+		Debug.Log ("CmdInvestCoin");
+		GameObject objDealer = GameObject.Find ("Dealer(Clone)");
+		if (objDealer != null)
+			objDealer.GetComponent<Dealer_Script> ().Invest_Func (netid, arrCoin);
 	}
 }
 

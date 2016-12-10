@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.Networking;
 using System.Collections;
 using UnityEngine.UI;
 
@@ -27,16 +28,10 @@ public class GameManager_Script : MonoBehaviour
 	public PlayerType playerType = PlayerType.None;
 	public GameState gameState = GameState.None;
 
-
 	public float timeValue = 0f;
 	public Text timeText = null;
 	public int today = 0;
 	public Text dayText = null;
-
-	void Awake()
-	{
-		gameState = GameState.None;
-	}
 
 	public void Init_Func(PlayerType _playerType)
 	{
@@ -83,7 +78,7 @@ public class GameManager_Script : MonoBehaviour
 			yield return null;
 		}
 	}
-		
+
 	protected virtual void InvestState_Func()
 	{
 		gameState = GameState.Invest;
@@ -103,7 +98,7 @@ public class GameManager_Script : MonoBehaviour
 	{
 		gameState = GameState.Result_Total;
 	}
-		
+
 	public virtual void SetState_Func(GameState _setState)
 	{
 		// 위 함수는 오직 딜러(호스트)만이 호출함
@@ -112,7 +107,7 @@ public class GameManager_Script : MonoBehaviour
 		switch(_setState)
 		{
 		case GameState.None:
-			
+
 			break;
 		case GameState.Ready_First:
 			ReadyFirstState_Func();
@@ -121,7 +116,7 @@ public class GameManager_Script : MonoBehaviour
 		case GameState.Ready:
 			ReadyState_Func();
 			break;
-		
+
 		case GameState.Market:
 			MarketState_Func();
 
@@ -131,7 +126,7 @@ public class GameManager_Script : MonoBehaviour
 
 			break;
 		case GameState.Fluctuate:
-			  FluctuateState_Func();
+			FluctuateState_Func();
 			break;
 		case GameState.Result:
 			Debug.Log("Test, today : " + today);
