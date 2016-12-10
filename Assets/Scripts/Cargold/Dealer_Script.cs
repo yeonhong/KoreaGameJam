@@ -97,7 +97,11 @@ public class Dealer_Script : GameManager_Script
 
 			Common_Data.Instance().CompanyData[i].fluctuateValue_RecentDay = randValue;
 			Common_Data.Instance().CompanyData[i].fluctuateValue_Total += randValue;
+
+			PlayerPrefs.SetInt ("Change" + i,(int)randValue);
 		}
+
+		transform.parent.GetComponent<NetClient> ().CmdGenerateHint ();
 	}
 
 	//!!!!!!!!!!

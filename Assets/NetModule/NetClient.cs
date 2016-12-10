@@ -156,16 +156,26 @@ public class NetClient : NetworkBehaviour
 		}
 	}
 
+	[Command]
+	public void CmdGenerateHint()
+	{
+		GameManager.instance.gameObject.SendMessage ("SG");
+	}
+
 	public void ReqGetHint()
 	{
-		CmdGetHint (netId);
+		string str = netId.ToString ();
+		CmdGetHint (netId, (int.Parse (str))%4);
 	}
 
 	[Command]
-	public void CmdGetHint(NetworkInstanceId netid)
+	public void CmdGetHint(NetworkInstanceId netid, int idxHint)
 	{
-		string hint1 = "hint1";
-		string hint2 = "hint2";
+		idxHint *= 2;
+
+		string hint1 = GameManager.instance.listHint[idxHint + 0];
+		string hint2 = GameManager.instance.listHint[idxHint + 1];
+
 		RpcGetHint (netid, hint1, hint2);
 	}
 

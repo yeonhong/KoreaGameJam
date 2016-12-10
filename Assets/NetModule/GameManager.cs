@@ -16,6 +16,8 @@ public class GameManager : Singleton<GameManager>
 	public GameObject objDealer;
 	public GameObject objPlayer;
 
+	public List<string> listHint = new List<string>();
+
 	protected override void Start() {
 		base.Start ();
 		myNetManager = NetManager.instance;
@@ -29,12 +31,14 @@ public class GameManager : Singleton<GameManager>
 
 	public bool IsAllNicknameSetting()
 	{
+		Debug.Log ("listNetClient.Count " + listNetClient.Count);
+
 		if (listNetClient.Count == 1) // dealer...
 			return false;
 
 		for(int f=0; f<listNetClient.Count; ++f) {
 
-			Debug.Log ("listNetClient[" + f + "]" + listNetClient [f].tag + "," +listNetClient [f].bNicknameConfirm);
+			//Debug.Log ("listNetClient[" + f + "]" + listNetClient [f].tag + "," +listNetClient [f].bNicknameConfirm);
 
 			if (listNetClient [f].transform.childCount == 0 && !listNetClient [f].bNicknameConfirm) {
 				return false;
@@ -56,5 +60,15 @@ public class GameManager : Singleton<GameManager>
 		GameObject objUI = Instantiate (objPlayer, target.transform) as GameObject;
 		//objUI.transform.localPosition = Vector3.zero;
 		objUI.transform.localPosition = new Vector3(0,169,0);
+	}
+
+	public void Give_Hint()
+	{
+		Debug.Log ("Give_Hint message recive");
+
+		listHint.Clear ();
+
+		for (int f = 0; f < 8; ++f)
+			listHint.Add (PlayerPrefs.GetString ("Hint" + f));
 	}
 }
