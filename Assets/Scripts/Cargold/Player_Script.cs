@@ -58,21 +58,22 @@ public class Player_Script : GameManager_Script
 
 	public void InvestIncrease_Func(int id)
 	{
-		Debug.Log ("InvestIncrease_Func : " + coinNum);
-
-		if( coinNum > 0 )
-		{
+		if( coinNum > 0 ) {
 			coinNum--;
 			investCoin[id] += Common_Data.Instance().coinMeasure;
+
+			Debug.Log ("InvestIncrease_Func : " + coinNum);
 		}
 	}
 
 	public void InvestDecrease_Func(int id)
 	{
-		Debug.Log ("InvestDecrease_Func : " + coinNum);
+		if (investCoin [id] > 0) {
+			coinNum++;
+			investCoin [id] -= Common_Data.Instance ().coinMeasure;
 
-		coinNum++;
-		investCoin[id] -= Common_Data.Instance().coinMeasure;
+			Debug.Log ("InvestDecrease_Func : " + coinNum);
+		}
 	}
 
 	public void SetGoldAmount_Func(float _value)
