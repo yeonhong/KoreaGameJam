@@ -93,6 +93,10 @@
      <Compile Include="Assets\Example\particleCallbacks\Scripts\ReticleMovement.cs" />
      <Compile Include="Assets\Example\particleCallbacks\Scripts\Sprinkler.cs" />
      <Compile Include="Assets\Example\particleCallbacks\Scripts\SprinklerAudio.cs" />
+     <Compile Include="Assets\NetTest\NetClient.cs" />
+     <Compile Include="Assets\NetTest\NetClientTestManager.cs" />
+     <Compile Include="Assets\NetTest\NetManager.cs" />
+     <Compile Include="Assets\NetTest\UnityDocTest\PlayerController.cs" />
      <Compile Include="Assets\Scripts\GameManager.cs" />
      <Compile Include="Assets\Scripts\Player.cs" />
      <Compile Include="Assets\Scripts\Singleton.cs" />
