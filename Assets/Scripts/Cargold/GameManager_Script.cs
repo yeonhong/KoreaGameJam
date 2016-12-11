@@ -89,7 +89,7 @@ public class GameManager_Script : MonoBehaviour
 		gameState = GameState.Fluctuate;
 	}
 
-	protected virtual void ResultState_Func()
+	protected virtual void ResultState_Func(bool isLast)
 	{
 		gameState = GameState.Result;
 	}
@@ -132,11 +132,11 @@ public class GameManager_Script : MonoBehaviour
 			Debug.Log("Test, today : " + today);
 			if( today >= Common_Data.Instance().dayNum )
 			{
-				ResultTotalState_Func();
+				ResultState_Func(true);
 			}
 			else
 			{
-				ResultState_Func();
+				ResultState_Func(false);
 			}
 			break;
 		case GameState.GameEnd:

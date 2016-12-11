@@ -37,6 +37,17 @@ public class Dealer_Script : GameManager_Script
 	public Vector3 showPos;
 	public Vector3 hidePos;
 
+	public GameObject StartButtonObj = null;
+
+	public GameObject logoObj = null;
+	public GameObject resultTextGroupObj = null;
+	public Text resultText = null;
+	public Text[] resultValueText = null;
+	public GameObject gameClearObj = null;
+	public Text gameClearText = null;
+
+	public Text[] playerNickname;
+
 	void Awake()
 	{
 		coinGrid = new CoinIconGrid_Script[4,3];
@@ -47,6 +58,8 @@ public class Dealer_Script : GameManager_Script
 			coinGrid[2,i] = coinGrid_player2[i];
 			coinGrid[3,i] = coinGrid_player3[i];
 		}
+
+		StartButtonObj.transform.localPosition = showPos;
 	}
 
 	public void StartGame_Func()
@@ -55,31 +68,46 @@ public class Dealer_Script : GameManager_Script
 
 		base.Init_Func(PlayerType.Dealer);
 
-//		if( isReadyAllPlayer == false )
-//		{
-//			Debug.Log("Host : 아직 4명의 플레이어가 준비되지 않았습니다.");
-////			Debug.Log("현재 접속 인원 : " + );
-//		}
 		if (true == GameManager.instance.IsAllNicknameSetting())
 		{
+			Common_Data.Instance().CompanyData = new CompanyDataStr[3];
+			for(int companyID=0; 3>companyID; companyID++)
+			{
+				Common_Data.Instance().CompanyData[companyID].Init_Func();
+
+				companyFlucData[companyID].SetData_Func(FluctuateDataState.Steady, 0);
+			}
+
 			SetState_Func(GameState.Ready_First);
 		}
 	}
-
+		
 	protected override void ReadyFirstState_Func ()                                                    
 	{
 		base.ReadyFirstState_Func();
 
-		Common_Data.Instance().CompanyData = new CompanyDataStr[3];
-		for(int companyID=0; 3>companyID; companyID++)
-		{
-			Common_Data.Instance().CompanyData[companyID].Init_Func();
-
-			companyFlucData[companyID].SetData_Func(FluctuateDataState.Steady, 0);
-		}
-
+		StartCoroutine(Start_Cor());
 
 		SetState_Func(GameState.Market);
+	}
+
+	IEnumerator Start_Cor()
+	{
+		AudioSource audioPlay = this.GetComponent<AudioSource>();
+		audioPlay.Play();
+		audioPlay.volume = 0f;
+
+		float time = 1f;
+		while(time>0f)
+		{
+			audioPlay.volume = (1f - time);
+
+			StartButtonObj.GetComponent<Image>().color = new Color(1f, 1f, 1f, time);
+			time -= 0.01f;
+			yield return new WaitForFixedUpdate();
+		}
+
+		StartButtonObj.SetActive(false);
 	}
 
 	protected override void ReadyState_Func ()
@@ -105,6 +133,9 @@ public class Dealer_Script : GameManager_Script
 
 		investClearObj.SetActive(false);
 		investCount = 0;
+
+		logoObj.SetActive(true);
+		resultTextGroupObj.SetActive(false);
 	}
 
 	void MarketOpen_Func()
@@ -119,7 +150,8 @@ public class Dealer_Script : GameManager_Script
 
 		for(int i=0; _companyNum>i; i++)
 		{
-			float randValue = Random.Range(minValue, maxValue);
+			float randValue = Random.Range(minValue, maxValue) * 5;
+			if( randValue >= 99f ) randValue = 99;
 
 			Common_Data.Instance().CompanyData[i].fluctuateValue[today-1] = randValue;
 			Common_Data.Instance().CompanyData[i].fluctuateValue_Total += randValue;
@@ -173,6 +205,7 @@ public class Dealer_Script : GameManager_Script
 	{
 		fluctuateTrf.localPosition = showPos;
 		resultTrf.localPosition = hidePos;
+	
 
 		for(int companyID=0; 3>companyID; companyID++)
 		{
@@ -203,9 +236,10 @@ public class Dealer_Script : GameManager_Script
 		SetState_Func(GameState.Result);
 	}
 		
-	protected override void ResultState_Func ()
+	protected override void ResultState_Func (bool isLast)
 	{
-		base.ResultState_Func ();
+		if( isLast == false ) base.ResultState_Func (false);
+		else if( isLast == true ) base.ResultTotalState_Func();
 
 		fluctuateTrf.localPosition = hidePos;
 		resultTrf.localPosition = showPos;
@@ -225,6 +259,11 @@ public class Dealer_Script : GameManager_Script
 		foreach (KeyValuePair<NetworkInstanceId, cPlayerInvestData> target in dicInvestData)
 		{
 			arrids[i++] = target.Key;
+		}
+
+		for(int playerID=0;arrids.Length>playerID;playerID++)
+		{
+			playerNickname[playerID].text = arrids[playerID] + " 님";
 		}
 
 		// 각 회사 별로...
@@ -272,51 +311,95 @@ public class Dealer_Script : GameManager_Script
 				int investCount = dicInvestData[arrids[playerID]].playerInvestAmount[companyID];
 
 				coinGrid[playerID, companyID].SetCoint_Func(investCount);
-				dicInvestData[arrids[playerID]].playerGoldAmount[companyID] = investCount *
-					Common_Data.Instance().coinMeasure;
+				dicInvestData[arrids[playerID]].playerGoldAmount[companyID] = (int)(investCount *
+					Common_Data.Instance().coinMeasure *
+					(1 + Common_Data.Instance().CompanyData[companyID].fluctuateValue[today-1]/100f)
+				);
 			}
 		}
 
-		foreach (KeyValuePair<NetworkInstanceId, cPlayerInvestData> target in dicInvestData) {
+		foreach (KeyValuePair<NetworkInstanceId, cPlayerInvestData> target in dicInvestData)
+		{
+//			Debug.Log ("플레이어의 재산 : " + 
+
 			target.Value.playerGoldAmount_Total += target.Value.playerGoldAmount [0];
 			target.Value.playerGoldAmount_Total += target.Value.playerGoldAmount [1];
 			target.Value.playerGoldAmount_Total += target.Value.playerGoldAmount [2];
-
-			Debug.Log ("플레이어 " + target.Key + "의 재산 : " + target.Value.playerGoldAmount_Total);
 		}
 
-//		for(int playerID=0; 4>playerID; playerID++)
-//		{
-////			Debug.Log("플레이어 " + playerID + "의 재산 : " +
-////				((int)playerGoldAmount[playerID, 0]).ToString() + ", " +
-////				((int)playerGoldAmount[playerID, 1]).ToString() + ", " +
-////				((int)playerGoldAmount[playerID, 2]).ToString() + ", ");
-//
-//			playerGoldAmount_Total[playerID] += playerGoldAmount[playerID, 0];
-//			playerGoldAmount_Total[playerID] += playerGoldAmount[playerID, 1];
-//			playerGoldAmount_Total[playerID] += 
-//				playerGoldAmount[playerID, 2];
-//		}
+		for(int playerID=0; dicInvestData.Count>playerID; playerID++)
+		{
+			Debug.Log ("플레이어 " + playerID.ToString() + "의 재산 : " + dicInvestData[arrids[playerID]].playerGoldAmount_Total.ToString());
+			transform.parent.GetComponent<NetClient> ().RpcSendScore(arrids[playerID], dicInvestData[arrids[playerID]].playerGoldAmount_Total);
+		}
+
+		StartCoroutine( ResultText_Func(isLast));
+	}
+
+	IEnumerator ResultText_Func(bool isLast)
+	{
+		yield return new WaitForSeconds(3f);
+		for(int playerID=0; dicInvestData.Count>playerID; playerID++)
+		{
+			for(int companyID=0; 3>companyID; companyID++)
+			{
+				coinGrid[playerID, companyID].SetCoint_Func(0);
+			}
+		}
+
+		logoObj.SetActive(false);
+		resultTextGroupObj.SetActive(true);
+
+		if( isLast == true )
+		{
+			resultText.text = "최종 정산";
+		}
+		else
+		{
+			resultText.text = "중간 정산";
+		}
+		yield return new WaitForSeconds(0.5f);
+
+		NetworkInstanceId[] arrids = new NetworkInstanceId[dicInvestData.Count];
+		int i = 0;
+		foreach (KeyValuePair<NetworkInstanceId, cPlayerInvestData> target in dicInvestData)
+		{
+			arrids[i++] = target.Key;
+		}
+
+		for(int playerID=0; dicInvestData.Count>playerID; playerID++)
+		{
+			resultValueText[playerID].text = (dicInvestData[arrids[playerID]].playerGoldAmount_Total * 10000).ToString();
+			yield return new WaitForSeconds(0.25f);
+		}
+
+		if( isLast == true )
+		{
+			yield return new WaitForSeconds(0.5f);
+
+			int victoryPlayerID = 0;
+			for(int playerID=1; dicInvestData.Count>playerID; playerID++)
+			{
+				if( dicInvestData[arrids[playerID]].playerGoldAmount_Total > dicInvestData[arrids[victoryPlayerID]].playerGoldAmount_Total )
+				{
+					victoryPlayerID = playerID;
+				}
+			}
+
+			gameClearObj.SetActive(true);
+
+			gameClearText.text = "우승은 " + arrids[victoryPlayerID].ToString() + "번 플레이어";
+		}
 	}
 
 	public void ResultClear_Func()
 	{
 		SetState_Func(GameState.Ready);
 	}
-		
-	protected override void ResultTotalState_Func ()
+
+	public void GameClear_Func()
 	{
-		base.ResultTotalState_Func ();
-
-		foreach (KeyValuePair<NetworkInstanceId, cPlayerInvestData> target in dicInvestData) {
-			target.Value.playerGoldAmount_Total += target.Value.playerGoldAmount [0];
-			target.Value.playerGoldAmount_Total += target.Value.playerGoldAmount [1];
-			target.Value.playerGoldAmount_Total += target.Value.playerGoldAmount [2];
-
-			Debug.Log ("플레이어 " + target.Key + "의 재산 : " + target.Value.playerGoldAmount_Total);
-		}
-
-		winnerText.text = "승자는 누구누구입니다!";
+		Application.LoadLevel("Ingame");
 	}
 
 	public override void SetState_Func(GameState _setState)
@@ -352,11 +435,11 @@ public class Dealer_Script : GameManager_Script
 			Debug.Log("Test, today : " + today);
 			if( today >= Common_Data.Instance().dayNum )
 			{
-				ResultTotalState_Func();
+				ResultState_Func(true);
 			}
 			else
 			{
-				ResultState_Func();
+				ResultState_Func(false);
 			}
 			break;
 		case GameState.GameEnd:
@@ -368,5 +451,3 @@ public class Dealer_Script : GameManager_Script
 		transform.parent.GetComponent<NetClient>().CmdSetStatePlayer (_setState);
 	}
 }
-
-

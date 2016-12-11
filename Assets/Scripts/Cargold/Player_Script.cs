@@ -29,6 +29,7 @@ public class Player_Script : GameManager_Script
 	public CompanyFluctuateData_Script[] companyFlucData;
 
 	public GameObject holdScreenObj = null;
+	public GameObject StartButtonObj = null;
 
 	void Awake()
 	{
@@ -42,6 +43,9 @@ public class Player_Script : GameManager_Script
 			investCount[1,i] = investCount_B[i];
 			investCount[2,i] = investCount_C[i];
 		}
+
+		goldAmount.text = "0";
+		goldAmount_Total.text = "0";
 	}
 
 	public void Init_Func()
@@ -49,6 +53,8 @@ public class Player_Script : GameManager_Script
 		// 자신의 접속 여부를 알리며, 해당 함수로부터 ID를 리턴 받음
 
 		base.Init_Func(PlayerType.Player);
+
+		StartButtonObj.SetActive(false);
 
 		transform.parent.GetComponent<NetClient>().SendNickName ("init");
 	}
@@ -105,11 +111,13 @@ public class Player_Script : GameManager_Script
 
 	public void InvestIncrease_Func(int id)
 	{
+		if( isPlayerInvested == true ) return;
+
 		if( coinNum > 0 )
 		{
 			coinNum--;
 			investCoin[id]++;
-			goldAmount.text = (investCoin [id] * Common_Data.Instance().coinMeasure).ToString();
+			goldAmount.text = ((5-coinNum) * Common_Data.Instance().coinMeasure).ToString();
 
 			Debug.Log ("InvestIncrease_Func : " + coinNum);
 
@@ -126,11 +134,13 @@ public class Player_Script : GameManager_Script
 
 	public void InvestDecrease_Func(int id)
 	{
+		if( isPlayerInvested == true ) return;
+
 		if (investCoin [id] > 0)
 		{
 			coinNum++;
 			investCoin [id]--;
-			goldAmount.text = (investCoin [id] * Common_Data.Instance().coinMeasure).ToString();
+			goldAmount.text = ((5-coinNum) * Common_Data.Instance().coinMeasure).ToString();
 
 			Debug.Log ("InvestDecrease_Func : " + coinNum);
 
@@ -258,5 +268,6 @@ public class Player_Script : GameManager_Script
 
 	public void RecvScore(int score)
 	{
+		goldAmount_Total.text = score.ToString();
 	}
 }
