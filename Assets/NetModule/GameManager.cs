@@ -74,6 +74,20 @@ public class GameManager : Singleton<GameManager>
 		for (int f = 0; f < listHint.Count; ++f) {
 			Debug.Log (listHint [f]);
 		}
-			
+	}
+
+	public string GetNickname(NetworkInstanceId _netID)
+	{
+		for (int f = 0; f < listNetClient.Count; ++f) {
+			if (listNetClient [f].netId == _netID)
+				return listNetClient [f].m_nickName;
+		}
+
+		return _netID.ToString() + "님";
+	}
+
+	public string GetCurrency(int amount)
+	{
+		return string.Format ("%,.2f", amount);;
 	}
 }
