@@ -54,8 +54,6 @@ public class Player_Script : GameManager_Script
 	{
 		base.ReadyFirstState_Func ();
 
-		isSlideClear = true;
-
 		for(int i=0; 3>i; i++)
 		{
 			companyFlucData[i].Init_Func();
@@ -72,6 +70,7 @@ public class Player_Script : GameManager_Script
 		investCoin = new int[Common_Data.Instance().GetCompanyNum_Func()];
 		slideAni.Play("HintUnlock");
 		lockHintID = -1;
+		isSlideClear = true;
 
 		for(int i=0; 3>i; i++)
 		{
@@ -155,12 +154,9 @@ public class Player_Script : GameManager_Script
 
 	public void LockHint_Func(int _id)
 	{
-		Debug.Log("Test1");
-
 		if( lockHintID == -1 || lockHintID == _id )
 		{
 			lockHintID = _id;
-			Debug.Log("Test1");
 
 			if( _id == 0 )
 			{
@@ -169,7 +165,6 @@ public class Player_Script : GameManager_Script
 			}
 			else if( _id == 1 )
 			{
-				Debug.Log("Test3");
 				slideAni["LockHint_1"].speed = 1;
 				slideAni.Play("LockHint_1");
 			}

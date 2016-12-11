@@ -70,6 +70,11 @@ public class Dealer_Script : GameManager_Script
 	{
 		base.ReadyFirstState_Func();
 
+		for(int companyID=0; 3>companyID; companyID++)
+		{
+			companyFlucData[companyID].SetData_Func(FluctuateDataState.Steady, 0);
+		}
+
 		SetState_Func(GameState.Market);
 	}
 
