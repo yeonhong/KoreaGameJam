@@ -8,6 +8,7 @@ public class Player_Script : GameManager_Script
 	public bool isSlideClear = false;
 	public Text[] hintText = null;
 	public Text goldAmount = null;
+	public Text goldAmount_Total = null;
 
 	public int coinNum = 0;
 	public int[] investCoin;
@@ -26,6 +27,8 @@ public class Player_Script : GameManager_Script
 
 	public GameObject[,] investCount;
 	public CompanyFluctuateData_Script[] companyFlucData;
+
+	public GameObject holdScreenObj = null;
 
 	void Awake()
 	{
@@ -71,6 +74,7 @@ public class Player_Script : GameManager_Script
 		slideAni.Play("HintUnlock");
 		lockHintID = -1;
 		isSlideClear = true;
+		holdScreenObj.SetActive(false);
 
 		for(int i=0; 3>i; i++)
 		{
@@ -105,6 +109,7 @@ public class Player_Script : GameManager_Script
 		{
 			coinNum--;
 			investCoin[id]++;
+			goldAmount.text = (investCoin [id] * Common_Data.Instance().coinMeasure).ToString();
 
 			Debug.Log ("InvestIncrease_Func : " + coinNum);
 
@@ -125,6 +130,7 @@ public class Player_Script : GameManager_Script
 		{
 			coinNum++;
 			investCoin [id]--;
+			goldAmount.text = (investCoin [id] * Common_Data.Instance().coinMeasure).ToString();
 
 			Debug.Log ("InvestDecrease_Func : " + coinNum);
 
@@ -241,5 +247,12 @@ public class Player_Script : GameManager_Script
 				companyFlucData[i].SetData_Func(FluctuateDataState.Down, company[i]);
 			}
 		}
+	}
+
+	protected override void FluctuateState_Func ()
+	{
+		base.FluctuateState_Func ();
+
+		holdScreenObj.SetActive(true);
 	}
 }

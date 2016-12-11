@@ -754,7 +754,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!1 &1000011780936928
 GameObject:
   m_ObjectHideFlags: 1
@@ -1915,7 +1915,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 0.7058824}
+  m_Color: {r: 0, g: 0, b: 0, a: 0.78431374}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -1941,8 +1941,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: db43ebba57a1dbe409d87f55969998a1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  valueText: {fileID: 0}
-  fluctuateStateObj: []
+  valueText: {fileID: 114000013183473066}
+  fluctuateStateObj:
+  - {fileID: 1000010450563814}
+  - {fileID: 1000013019850356}
+  - {fileID: 1000013022542012}
 --- !u!114 &114000010488651694
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2866,8 +2869,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: db43ebba57a1dbe409d87f55969998a1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  valueText: {fileID: 0}
-  fluctuateStateObj: []
+  valueText: {fileID: 114000012994800652}
+  fluctuateStateObj:
+  - {fileID: 1000010522035646}
+  - {fileID: 1000012141873004}
+  - {fileID: 1000012609471708}
 --- !u!114 &114000011691574586
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3165,8 +3171,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: db43ebba57a1dbe409d87f55969998a1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  valueText: {fileID: 0}
-  fluctuateStateObj: []
+  valueText: {fileID: 114000013650761122}
+  fluctuateStateObj:
+  - {fileID: 1000012103494646}
+  - {fileID: 1000010725563610}
+  - {fileID: 1000010708945002}
 --- !u!114 &114000011961089084
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3264,7 +3273,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "\uD22C\uC790 \uC644\uB8CC"
+  m_Text: "\uACB0\uC0B0 \uC911..."
 --- !u!114 &114000012180867314
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3722,6 +3731,7 @@ MonoBehaviour:
   - {fileID: 114000014214460350}
   - {fileID: 114000013335455818}
   goldAmount: {fileID: 114000010918424694}
+  goldAmount_Total: {fileID: 0}
   coinNum: 0
   investCoin: 
   investedCheckObj: {fileID: 1000010250909282}
@@ -3748,7 +3758,11 @@ MonoBehaviour:
   - {fileID: 1000010742102746}
   - {fileID: 1000012907352130}
   - {fileID: 1000011787459476}
-  companyFlucData: []
+  companyFlucData:
+  - {fileID: 114000010400142118}
+  - {fileID: 114000011902618110}
+  - {fileID: 114000011647732372}
+  holdScreenObj: {fileID: 1000011762705650}
 --- !u!114 &114000013097275074
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5151,7 +5165,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 169, y: -40}
-  m_SizeDelta: {x: 500, y: 200}
+  m_SizeDelta: {x: 500, y: 500}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224000010037935312
 RectTransform:
@@ -6036,7 +6050,7 @@ RectTransform:
   m_GameObject: {fileID: 1000012687337528}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children:
   - {fileID: 224000012237546174}

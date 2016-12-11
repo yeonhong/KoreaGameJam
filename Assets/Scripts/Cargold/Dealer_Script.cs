@@ -70,10 +70,14 @@ public class Dealer_Script : GameManager_Script
 	{
 		base.ReadyFirstState_Func();
 
+		Common_Data.Instance().CompanyData = new CompanyDataStr[3];
 		for(int companyID=0; 3>companyID; companyID++)
 		{
+			Common_Data.Instance().CompanyData[companyID].Init_Func();
+
 			companyFlucData[companyID].SetData_Func(FluctuateDataState.Steady, 0);
 		}
+
 
 		SetState_Func(GameState.Market);
 	}
@@ -96,10 +100,11 @@ public class Dealer_Script : GameManager_Script
 	{
 		base.NextDay_Func();
 
+		fluctuateTrf.localPosition = showPos;
+		resultTrf.localPosition = hidePos;
+
 		investClearObj.SetActive(false);
 		investCount = 0;
-//		playerInvestAmount = new float[4,3];
-//		playerGoldAmount = new float[4,3];
 	}
 
 	void MarketOpen_Func()
@@ -166,8 +171,8 @@ public class Dealer_Script : GameManager_Script
 
 	IEnumerator Fluctuate_Cor()
 	{
-		fluctuateTrf.position = showPos;
-		resultTrf.position = hidePos;
+		fluctuateTrf.localPosition = showPos;
+		resultTrf.localPosition = hidePos;
 
 		for(int companyID=0; 3>companyID; companyID++)
 		{
@@ -202,8 +207,8 @@ public class Dealer_Script : GameManager_Script
 	{
 		base.ResultState_Func ();
 
-		fluctuateTrf.position = hidePos;
-		resultTrf.position = showPos;
+		fluctuateTrf.localPosition = hidePos;
+		resultTrf.localPosition = showPos;
 
 		// 결과창에 코인 아이콘 개수 0개로 초기화
 		for(int playerID=0; dicInvestData.Count>playerID; playerID++)
@@ -314,15 +319,52 @@ public class Dealer_Script : GameManager_Script
 		winnerText.text = "승자는 누구누구입니다!";
 	}
 
-	public override void SetState_Func (GameState _setState)
+	public override void SetState_Func(GameState _setState)
 	{
-		base.SetState_Func (_setState);
+		// 위 함수는 오직 딜러(호스트)만이 호출함
+		// 따라서 호출 시 모든 플레이어(클라이언트)들도 전원 호출시켜야 함.
 
-//		for(int i=0; 4>i; i++)
-//		{
-//			PlayerClass[i].SetState_Func(_setState);
-//		}
+		switch(_setState)
+		{
+		case GameState.None:
 
+			break;
+		case GameState.Ready_First:
+			ReadyFirstState_Func();
+			break;
+
+		case GameState.Ready:
+			ReadyState_Func();
+			break;
+
+		case GameState.Market:
+			MarketState_Func();
+
+			break;
+		case GameState.Invest:
+			InvestState_Func();
+
+			break;
+		case GameState.Fluctuate:
+			FluctuateState_Func();
+			break;
+		case GameState.Result:
+			Debug.Log("Test, today : " + today);
+			if( today >= Common_Data.Instance().dayNum )
+			{
+				ResultTotalState_Func();
+			}
+			else
+			{
+				ResultState_Func();
+			}
+			break;
+		case GameState.GameEnd:
+//			GameEnd_Func();
+			break;
+		}
+
+		Debug.Log("!!!!!!!!!!!!!!!!!!!!!!!");
 		transform.parent.GetComponent<NetClient>().CmdSetStatePlayer (_setState);
 	}
 }

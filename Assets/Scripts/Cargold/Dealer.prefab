@@ -3414,8 +3414,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: db43ebba57a1dbe409d87f55969998a1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  valueText: {fileID: 0}
-  fluctuateStateObj: []
+  valueText: {fileID: 114000012725431054}
+  fluctuateStateObj:
+  - {fileID: 1000014292264668}
+  - {fileID: 1000011062806846}
+  - {fileID: 1000012484244152}
 --- !u!114 &114000011382731242
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3633,8 +3636,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: db43ebba57a1dbe409d87f55969998a1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  valueText: {fileID: 0}
-  fluctuateStateObj: []
+  valueText: {fileID: 114000010574856794}
+  fluctuateStateObj:
+  - {fileID: 1000013915800536}
+  - {fileID: 1000013082490126}
+  - {fileID: 1000013594838618}
 --- !u!114 &114000011690334736
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5058,8 +5064,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: db43ebba57a1dbe409d87f55969998a1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  valueText: {fileID: 0}
-  fluctuateStateObj: []
+  valueText: {fileID: 114000010855659642}
+  fluctuateStateObj:
+  - {fileID: 1000014003515354}
+  - {fileID: 1000013324626650}
+  - {fileID: 1000011556106352}
 --- !u!114 &114000013525332050
 MonoBehaviour:
   m_ObjectHideFlags: 1
