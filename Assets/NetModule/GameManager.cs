@@ -51,15 +51,15 @@ public class GameManager : Singleton<GameManager>
 	public void SetDealerUI(GameObject target)
 	{
 		GameObject objUI = Instantiate (objDealer, target.transform) as GameObject;
-		//objUI.transform.localPosition = Vector3.zero;
-		objUI.transform.localPosition = new Vector3(0,342,0);
+		objUI.transform.localPosition = Vector3.zero;
+		//objUI.transform.localPosition = new Vector3(0,342,0);
 	}
 
 	public void SetPlayerUI(GameObject target)
 	{
 		GameObject objUI = Instantiate (objPlayer, target.transform) as GameObject;
-		//objUI.transform.localPosition = Vector3.zero;
-		objUI.transform.localPosition = new Vector3(0,169,0);
+		objUI.transform.localPosition = Vector3.zero;
+		//objUI.transform.localPosition = new Vector3(0,169,0);
 	}
 
 	public void Give_Hint()
