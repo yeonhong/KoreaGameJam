@@ -255,4 +255,8 @@ public class Player_Script : GameManager_Script
 
 		holdScreenObj.SetActive(true);
 	}
+
+	public void RecvScore(int score)
+	{
+	}
 }

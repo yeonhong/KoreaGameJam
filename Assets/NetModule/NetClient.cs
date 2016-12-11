@@ -212,5 +212,14 @@ public class NetClient : NetworkBehaviour
 			objPlayer.GetComponent<Player_Script> ().ReciveStockInfo (company1, company2, company3);
 		}
 	}
+
+	[ClientRpc]
+	public void RpcSendScore(NetworkInstanceId _netid, int score)
+	{
+		GameObject objPlayer = GameObject.Find ("Player(Clone)");
+		if (objPlayer != null && objPlayer.transform.parent.GetComponent<NetClient>().netId == _netid) {
+			objPlayer.GetComponent<Player_Script> ().RecvScore (score);
+		}
+	}
 }
 
